@@ -1,0 +1,60 @@
+-- 1. Crear base de datos llamada películas (1 punto)
+
+    CREATE DATABASE peliculas;
+
+-- 2. Revisar los archivos peliculas.csv y reparto.csv para crear las tablas correspondientes,
+determinando la relación entre ambas tablas. (2 puntos)
+
+    CREATE TABLE peliculas(
+        id SERIAL PRIMARY KEY,
+        titulo VARCHAR,
+        año INT,
+        director VARCHAR);
+    
+    CREATE TABLE reparto(
+        id SERIAL PRIMARY KEY,
+        pelicula_id INT,
+        nombre VARCHAR,
+        FOREIGN KEY (pelicula_id) REFERENCES peliculas (id));
+       
+-- 3. Cargar ambos archivos a su tabla correspondiente (1 punto)
+  
+     \copy peliculas FROM 'C:\Users\Gonzalo\Desktop\Apoyo_Desafio_Top_100\peliculas.csv' csv header;
+
+     \copy reparto FROM 'C:\Users\Gonzalo\Desktop\Apoyo_Desafio_Top_100\reparto.csv' csv;
+
+-- 4. Listar todos los actores que aparecen en la película "Titanic", indicando el título de la película,
+año de estreno, director y todo el reparto. (0.5 puntos)
+SELECT reparto.nombre FROM reparto INNER JOIN peliculas ON peliculas.id=reparto.pelicula_id WHERE peliculas.titulo= 'Titanic';
+
+-- 5. Listar los titulos de las películas donde actúe Harrison Ford.(0.5 puntos)
+ 
+    SELECT peliculas.titulo FROM peliculas INNER JOIN reparto ON peliculas.id=reparto.pelicula_id WHERE reparto.nombre='Harrison Ford';
+
+-- 6. Listar los 10 directores mas populares, indicando su nombre y cuántas películas aparecen en el
+top 100.(1 puntos)
+
+        SELECT COUNT(director), director FROM peliculas GROUP BY director ORDER BY COUNT(director) DESC limit 10; 
+
+-- 7. Indicar cuantos actores distintos hay (1 puntos)
+
+    SELECT COUNT(DISTINCT nombre) FROM reparto;
+
+-- 8. Indicar las películas estrenadas entre los años 1990 y 1999 (ambos incluidos) ordenadas por
+título de manera ascendente.(1 punto)
+
+    SELEC titulo, año FROM peliculas WHERE año BETWEEN 1990 AND 1999 ORDER BY titulo ASC;
+
+-- 9. Listar el reparto de las películas lanzadas el año 2001 (1 punto)
+
+    SELECT reparto.nombre FROM reparto INNER JOIN peliculas ON reparto.pelicula_id=peliculas.id AND peliculas.año=2001;
+
+-- 10. Listar los actores de la película más nueva (1 punto)   
+
+     SELECT reparto.nombre FROM reparto INNER JOIN peliculas ON reparto.pelicula_id=peliculas.id AND peliculas.año=(SELECT MAX(peliculas.año) FROM peliculas);
+
+
+
+
+
+
